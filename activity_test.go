@@ -50,7 +50,7 @@ func TestEval(t *testing.T) {
 
 	tc.SetInput("address", "localhost:6379")
 	tc.SetInput("dbNo", 0)
-	tc.SetInput("sentence", "$WIMWV,333.1,R,24.9,N,A*1E")
+	tc.SetInput("sentence", "$GPRMC,133515.283,A,3510.55,S,13828.45,E,32.9,63.0,190419,,,*34'")
 	act.Eval(tc)
 
 	message := tc.GetOutput("mqtt_message")

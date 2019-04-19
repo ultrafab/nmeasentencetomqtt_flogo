@@ -30,11 +30,40 @@ func (a *MyActivity) Metadata() *activity.Metadata {
 type Variable struct {
 	Key string `json:"key"`
 	Desc  string `json:"desc"`
+	Func string `json:"func"`
 	Indexes []struct {
 				Index int `json:"index"`
 				Name string `json:"name"`
 				Type string `json:"type"`
 		} `json:"indexes"`
+}
+
+func MyFunction(a, b int) int {
+  return a + b
+}
+
+func ConvertCoordinates(stringa string, dir string) float32{
+	s_seconds := string(stringa[len(stringa)-3:len(stringa)-1])
+	s_minutes := string(stringa[len(stringa)-6:len(stringa)-4])
+	s_degrees := string(stringa[0:len(stringa)-6])
+	seconds,errs := strconv.Atoi(s_seconds)
+	if errs != nil {
+		log.Errorf("Error! Could not parse : %s", s_seconds )
+	}
+	minutes,errm := strconv.Atoi(s_minutes)
+	if errm != nil {
+		log.Errorf("Error! Could not parse : %s", s_minutes )
+	}
+	degrees,errd := strconv.Atoi(s_degrees)
+	if errd != nil {
+		log.Errorf("Error! Could not parse : %s", s_degrees )
+	}
+	cseconds := float32(seconds)*float32(60)/float32(100)
+	v := float32(degrees) + float32(minutes)/float32(60) + float32(cseconds)/float32(3600)
+	if dir == "S" || dir == "W"{
+		v = v * float32(-1)
+	}
+	return v
 }
 
 // Eval implements activity.Activity.Eval
@@ -79,10 +108,18 @@ func (a *MyActivity) Eval(context activity.Context) (done bool, err error)  {
 					}
 				 }
 				}
-
+				if v.Func == "convertCoordinates" {
+					lat_string := fmt.Sprintf("%.3f", m["lat"])
+					lat_dir := fmt.Sprintf("%s",m["lat_dir"])
+					lat_decimal := ConvertCoordinates(lat_string,lat_dir)
+					m["lat_decimal"] = lat_decimal
+					lon_string := fmt.Sprintf("%.3f", m["lon"])
+					lon_dir := fmt.Sprintf("%s",m["lon_dir"])
+					lon_decimal := ConvertCoordinates(lon_string,lon_dir)
+					m["lon_decimal"] = lon_decimal
+				}
 		}
 		data, _ := json.Marshal(m)
-    fmt.Printf("%s", data)
 		mqtt_message = string(data)
 	context.SetOutput("mqtt_message", mqtt_message)
 	context.SetOutput("topic", topic)

@@ -4,7 +4,7 @@
   "ref": "github.com/ultrafab/nmeasentencetomqtt_flogo",
   "version": "0.0.1",
   "title": "Nmea - Mqtt",
-  "description": "This activity convert a Nmea sentence, read the config from Redis and return a JSON-string",
+    "description": "This activity convert a Nmea sentence, read the config from Redis and return a JSON-string",
   "homepage": "https://github.com/ultrafab/nmeasentencetomqtt_flogo",
   "inputs":[
     {
